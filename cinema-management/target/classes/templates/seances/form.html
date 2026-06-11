@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${pageTitle}">Seance</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments/layout :: navbar}"></div>
+<main class="container py-4">
+    <div class="form-panel">
+        <h1 th:text="${pageTitle}">Seance</h1>
+        <form method="post" th:action="@{/seances}" th:object="${seance}">
+            <input type="hidden" th:field="*{id}">
+            <div class="mb-3">
+                <label class="form-label" for="dateHeure">Date et heure</label>
+                <input id="dateHeure" class="form-control" type="datetime-local" th:field="*{dateHeure}" required>
+                <div class="invalid-text" th:if="${#fields.hasErrors('dateHeure')}" th:errors="*{dateHeure}"></div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="film">Film</label>
+                <select id="film" class="form-select" th:field="*{film}" required>
+                    <option value="">Choisir un film</option>
+                    <option th:each="film : ${films}" th:value="${film.id}" th:text="${film.titre}"></option>
+                </select>
+                <div class="invalid-text" th:if="${#fields.hasErrors('film')}" th:errors="*{film}"></div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="salle">Salle</label>
+                    <input id="salle" class="form-control" th:field="*{salle}" required>
+                    <div class="invalid-text" th:if="${#fields.hasErrors('salle')}" th:errors="*{salle}"></div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="version">Version</label>
+                    <select id="version" class="form-select" th:field="*{version}" required>
+                        <option value="">Choisir</option>
+                        <option th:each="v : ${versions}" th:value="${v}" th:text="${v}"></option>
+                    </select>
+                    <div class="invalid-text" th:if="${#fields.hasErrors('version')}" th:errors="*{version}"></div>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label class="form-label" for="capaciteSalle">Capacite</label>
+                    <input id="capaciteSalle" class="form-control" type="number" min="1" th:field="*{capaciteSalle}" required>
+                    <div class="invalid-text" th:if="${#fields.hasErrors('capaciteSalle')}" th:errors="*{capaciteSalle}"></div>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary" type="submit">Enregistrer</button>
+                <a class="btn btn-outline-secondary" th:href="@{/seances}">Annuler</a>
+            </div>
+        </form>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

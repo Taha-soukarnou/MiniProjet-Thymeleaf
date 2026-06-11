@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand fw-semibold" th:href="@{/dashboard}">Cinema Manager</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="mainNav" class="collapse navbar-collapse">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" th:href="@{/films}">Films</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/seances}">Seances</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/billets}">Billets</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/stats}">Statistiques</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

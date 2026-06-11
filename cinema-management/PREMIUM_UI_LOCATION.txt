@@ -1,0 +1,2 @@
+Premium UI mockup generated in C:/Windows/Temp/cinema-premium-ui.
+Default port: 8088.

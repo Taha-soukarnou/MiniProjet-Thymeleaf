@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title + ' - CinemaOS'}">CinemaOS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/premium-cinema.css}" rel="stylesheet">
+</head>
+<body th:attr="data-page=${page}">
+<aside class="sidebar">
+    <a class="brand" th:href="@{/dashboard}"><span class="brand-mark">C</span><span><strong>CinemaOS</strong><small>Management Suite</small></span></a>
+    <nav>
+        <a th:classappend="${page == 'dashboard'} ? ' active'" th:href="@{/dashboard}"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+        <a th:classappend="${page == 'films' || page == 'film-form'} ? ' active'" th:href="@{/films}"><i data-lucide="film"></i>Films</a>
+        <a th:classappend="${page == 'seances' || page == 'seance-form'} ? ' active'" th:href="@{/seances}"><i data-lucide="calendar-days"></i>Seances</a>
+        <a th:classappend="${page == 'billets' || page == 'sell-ticket'} ? ' active'" th:href="@{/billets}"><i data-lucide="ticket"></i>Billets</a>
+        <a th:classappend="${page == 'stats'} ? ' active'" th:href="@{/stats}"><i data-lucide="bar-chart-3"></i>Statistiques</a>
+        <a href="#"><i data-lucide="settings"></i>Parametres</a>
+    </nav>
+    <div class="side-card"><span>Tonight occupancy</span><strong>84%</strong><div class="mini-progress"><b style="width:84%"></b></div></div>
+</aside>
+
+<div class="shell">
+    <header class="topbar">
+        <button class="icon-btn menu-toggle" type="button"><i data-lucide="menu"></i></button>
+        <div class="search"><i data-lucide="search"></i><input placeholder="Search films, screenings, tickets..."></div>
+        <button class="icon-btn" type="button"><i data-lucide="bell"></i><span class="dot"></span></button>
+        <button class="profile" type="button"><span>AM</span>Admin Manager<i data-lucide="chevron-down"></i></button>
+    </header>
+
+    <main class="content">
+        <div class="crumb">CinemaOS <i data-lucide="chevron-right"></i> <strong th:text="${title}">Dashboard</strong></div>
+        <div class="title-row">
+            <div><h1 th:text="${title}">Dashboard</h1><p th:text="${subtitle}">Overview</p></div>
+            <div class="actions"><button class="btn ghost"><i data-lucide="download"></i>Export</button><a class="btn primary" th:href="@{/billets/new}"><i data-lucide="plus"></i>Sell Ticket</a></div>
+        </div>
+
+        <section th:if="${page == 'dashboard'}">
+            <div class="kpis">
+                <article><span>Total Films</span><strong>42</strong><small>+6 this month</small><i data-lucide="film"></i></article>
+                <article><span>Seances Today</span><strong>18</strong><small>Across 5 rooms</small><i data-lucide="calendar-clock"></i></article>
+                <article><span>Tickets Sold</span><strong>1,284</strong><small>+14.8%</small><i data-lucide="ticket-check"></i></article>
+                <article><span>Monthly Revenue</span><strong>286,420 DH</strong><small>72% target</small><i data-lucide="wallet"></i></article>
+                <article><span>Occupancy Rate</span><strong>81.6%</strong><small>Prime time 92%</small><i data-lucide="armchair"></i></article>
+                <article><span>Upcoming</span><strong>7</strong><small>Next in 24 min</small><i data-lucide="clock"></i></article>
+            </div>
+            <div class="quick"><a th:href="@{/films/new}"><i data-lucide="clapperboard"></i>Add Film</a><a th:href="@{/seances/new}"><i data-lucide="calendar-plus"></i>Schedule Screening</a><a th:href="@{/billets/new}"><i data-lucide="badge-dollar-sign"></i>Sell Ticket</a></div>
+            <div class="charts"><article class="panel"><h2>Ticket Sales Trend</h2><canvas id="salesTrend"></canvas></article><article class="panel"><h2>Revenue by Film</h2><canvas id="revenueByFilm"></canvas></article><article class="panel"><h2>Occupancy by Screening</h2><canvas id="occupancyByScreening"></canvas></article></div>
+            <div class="split"><section class="panel"><h2>Recent Ticket Sales</h2><div th:replace="~{premium :: ticketsTable}"></div></section><section class="panel"><h2>Upcoming Screenings</h2><div class="screen-list"><div th:each="s : ${screenings}"><span><b th:text="${s.movie}">Movie</b><small th:text="${s.room + ' - ' + s.version}">Room</small></span><strong th:text="${s.time}">19:30</strong></div></div></section></div>
+        </section>
+
+        <section th:if="${page == 'films'}">
+            <div class="toolbar"><div class="search compact"><i data-lucide="search"></i><input placeholder="Search movie"></div><select class="form-select"><option>All genres</option><option>Science-fiction</option><option>Drame</option></select><a class="btn primary" th:href="@{/films/new}"><i data-lucide="plus"></i>Add Film</a></div>
+            <div class="movie-grid"><article class="movie" th:each="m : ${movies}"><img th:src="${m.poster}" alt=""><div><span class="badge-soft" th:text="${m.genre}">Genre</span><h2 th:text="${m.title}">Movie</h2><p th:text="${m.duration + ' - ' + m.screenings + ' screenings'}">Duration</p><footer><a th:href="@{/films/edit}">Edit</a><button>Delete</button></footer></div></article></div>
+            <section class="panel mt-4"><h2>Modern Data Table View</h2><table class="table premium-table"><thead><tr><th>Movie</th><th>Genre</th><th>Duration</th><th>Screenings</th><th></th></tr></thead><tbody><tr th:each="m : ${movies}"><td th:text="${m.title}">Movie</td><td><span class="badge-soft" th:text="${m.genre}">Genre</span></td><td th:text="${m.duration}">166</td><td th:text="${m.screenings}">12</td><td><button class="icon-btn"><i data-lucide="more-horizontal"></i></button></td></tr></tbody></table></section>
+        </section>
+
+        <section th:if="${page == 'film-form'}" class="form-page"><form class="form-card"><h2>Movie Information</h2><label>Title<input class="form-control" value="Dune: Part Two"></label><label>Genre<input class="form-control" value="Science-fiction"></label><label>Duration (minutes)<input class="form-control" type="number" value="166"></label><label>Poster Upload<input class="form-control" type="file"></label><div><button class="btn primary" type="button">Save</button><a class="btn ghost" th:href="@{/films}">Cancel</a></div></form></section>
+
+        <section th:if="${page == 'seances'}">
+            <div class="toolbar"><div class="search compact"><i data-lucide="search"></i><input placeholder="Search screening"></div><input class="form-control" type="date" value="2026-06-07"><select class="form-select"><option>All rooms</option><option>Salle 1</option></select><select class="form-select"><option>All versions</option><option>VF</option><option>VOST</option><option>VO</option></select></div>
+            <div class="calendar"><span class="active">Sun 07</span><span>Mon 08</span><span>Tue 09</span><span>Wed 10</span><span>Thu 11</span></div>
+            <div class="screen-cards"><article th:each="s : ${screenings}"><div class="poster"></div><div><h2 th:text="${s.movie}">Movie</h2><p th:text="${'07 Jun 2026 - ' + s.time}">Time</p><p th:text="${s.room + ' - ' + s.version}">Room</p></div><div class="occ"><strong th:text="${s.occupancy}">92%</strong><small>Occupancy</small><div class="mini-progress"><b th:style="${'width:' + s.occupancy}"></b></div></div><footer><a th:href="@{/seances/edit}">Edit</a><button>Delete</button></footer></article></div>
+        </section>
+
+        <section th:if="${page == 'seance-form'}" class="form-page"><form class="form-card"><h2>Movie Selection</h2><label>Film<select class="form-select"><option>Dune: Part Two</option></select></label><h2>Screening Details</h2><label>Date & Time<input class="form-control" type="datetime-local" value="2026-06-07T19:30"></label><label>Room<select class="form-select"><option>Salle 1</option><option>Salle VIP</option></select></label><label>Version<select class="form-select"><option>VF</option><option>VOST</option><option>VO</option></select></label><label>Capacity<input class="form-control" type="number" value="160"></label><div><button class="btn primary" type="button">Save</button><a class="btn ghost" th:href="@{/seances}">Cancel</a></div></form></section>
+
+        <section th:if="${page == 'billets'}"><div class="toolbar"><div class="search compact"><i data-lucide="search"></i><input placeholder="Search tickets"></div><select class="form-select"><option>All status</option><option>Sold</option><option>Cancelled</option></select><a class="btn primary" th:href="@{/billets/new}"><i data-lucide="plus"></i>Sell Ticket</a></div><section class="panel"><div th:replace="~{premium :: ticketsTable}"></div></section></section>
+
+        <section th:if="${page == 'sell-ticket'}" class="sale-page"><aside><div class="poster large"></div><h2>Dune: Part Two</h2><p>Science-fiction - 166 min - VF</p><dl><dt>Screening</dt><dd>07 Jun 2026, 19:30</dd><dt>Room</dt><dd>Salle 1 - 160 seats</dd><dt>Occupancy</dt><dd>92%</dd></dl></aside><form class="form-card"><h2>Ticket Purchase</h2><label>Ticket price<input class="form-control" type="number" value="85"></label><div class="summary"><span>Movie</span><b>Dune: Part Two</b><span>Seat class</span><b>Standard</b><span>Total</span><b>85 DH</b></div><div><button class="btn primary" type="button">Sell Ticket</button><a class="btn ghost" th:href="@{/billets}">Cancel</a></div></form></section>
+
+        <section th:if="${page == 'stats'}"><div class="kpis four"><article><span>Monthly Revenue</span><strong>286,420 DH</strong><small>+18.4%</small><i data-lucide="trending-up"></i></article><article><span>Total Tickets</span><strong>18,928</strong><small>June 2026</small><i data-lucide="ticket"></i></article><article><span>Occupancy</span><strong>81.6%</strong><small>Network average</small><i data-lucide="users"></i></article><article><span>Popular Movie</span><strong>Dune</strong><small>4,281 tickets</small><i data-lucide="star"></i></article></div><div class="charts"><article class="panel"><h2>Revenue per Film</h2><canvas id="statsRevenue"></canvas></article><article class="panel"><h2>Tickets Sold per Month</h2><canvas id="monthlyTickets"></canvas></article><article class="panel"><h2>Genre Distribution</h2><canvas id="genreDistribution"></canvas></article></div><section class="panel mt-4"><h2>Top Performing Films</h2><div class="leaders"><div th:each="m : ${movies}"><img th:src="${m.poster}" alt=""><span><b th:text="${m.title}">Movie</b><small th:text="${m.genre}">Genre</small></span><strong>98,400 DH</strong><em>4,281 tickets</em><em>92% occupancy</em></div></div></section></section>
+    </main>
+</div>
+
+<div th:fragment="ticketsTable" class="table-responsive"><table class="table premium-table"><thead><tr><th>Ticket ID</th><th>Movie</th><th>Screening</th><th>Purchase Date</th><th>Price</th><th>Status</th><th></th></tr></thead><tbody><tr th:each="t : ${tickets}"><td th:text="${t.id}">ID</td><td th:text="${t.movie}">Movie</td><td th:text="${t.screening}">Screening</td><td th:text="${t.date}">Date</td><td th:text="${t.price}">Price</td><td><span class="status" th:classappend="${t.status == 'Sold'} ? ' sold' : ' cancelled'" th:text="${t.status}">Sold</span></td><td><button class="icon-btn"><i data-lucide="more-horizontal"></i></button></td></tr></tbody></table></div>
+<div class="toast-demo"><i data-lucide="check-circle"></i>Ticket sale saved successfully</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script th:src="@{/js/premium-cinema.js}"></script>
+</body>
+</html>
